@@ -1,0 +1,139 @@
+TASK: Build a complete, production-ready, SEO-optimized website of online calculators that replicates and improves upon calculator.net. Include every calculator in the list below (all categories). The site must be modern, mobile-first, extremely fast, modular, and ready to scale to hundreds more calculators. Create a generator system so each calculator page is produced from a single JSON/CSV data file. Implement the Trust & Clarity color scheme and UX rules described below.
+
+GOALS:
+- Ship a scaffolding site with one codebase that auto-generates pages for every calculator in the provided list.
+- Every calculator page must include: working calculator UI, SEO-rich explanation content, formula, manual example, FAQ section, related calculators, JSON-LD schema for FAQ and HowTo (where applicable), and embed widget code.
+- Produce a sitemap.xml, robots.txt, and accessible navigation.
+- Optimize for speed (minimal JS, lazy load, semantic HTML). Follow WCAG contrast guidance.
+
+TECH STACK:
+- Static-first architecture: HTML + CSS + vanilla JS for core (no heavy frameworks required).
+- Use a simple build script (Node.js) that reads a `calculators.json` and emits per-calculator HTML files (or optional: a lightweight Express/Flask dev server for demo).
+- CSS: single `styles.css` with CSS variables (root tokens) for colors and theme + optional Tailwind config generator file.
+- JS: `script.js` for search, embed generator, related calculators, dark mode toggle, and small calculation library per calculator.
+- Folder structure:
+  - `/src`
+    - `index.html`
+    - `sitemap.html`
+    - `categories/` (category landing pages)
+    - `calculators/` (auto-generated pages)
+    - `assets/` (icons, logo, fonts)
+    - `styles.css`
+    - `script.js`
+    - `generators/` (node script: `build.js` or `generate.js`)
+    - `calculators.json` (master list — each entry includes name, slug, category, inputs, formula, description, examples, FAQ array, related slugs)
+  - `/dist` output after build
+
+COLOR SCHEME (Trust & Clarity — required exactly)
+- Root CSS variables to include:
+  --bg: #F5FBFF;
+  --surface: #FFFFFF;
+  --text: #0B1224;
+  --muted: #6B7280;
+  --brand: #1E88E5;
+  --brand-600: #1565C0;
+  --accent: #00A3A3;
+  --border: #E6F0FA;
+- Use these variables everywhere. Add button / focus / hover states as described:
+  - `.button { background: var(--brand); color: #fff; border-radius: 10px; transition: transform .14s ease, filter .14s ease }`
+  - `.button:hover { transform: translateY(-1px); filter: brightness(.94); }`
+
+SITE & NAVIGATION:
+- Header: Logo + search input + nav links (Home / Categories / Sitemap / About / Contact / Embed).
+- Hero: brief tagline (“Free Online Calculators for Every Need”) + search.
+- Categories on homepage: Financial, Fitness & Health, Math, Other, Calculators for Your Site.
+- Breadcrumbs on every calculator page.
+- Footer: sitemap links, privacy, terms, contact, last-updated date.
+- Add a `sitemap.xml` generator in build script.
+
+SEO & CONTENT RULES (MANDATORY):
+- Every calculator page must include:
+  1. `title` formatted: `<Calculator Name> — Free Online Calculator | YourSiteName`
+  2. meta description (approx 140–160 chars) derived from the short description in JSON.
+  3. H1 = calculator name; H2 for “How it works”, H3 for “Formula”, H3 for “Example”, H2 for “FAQ”.
+  4. A concise but thorough explanation paragraph (40–120 words) describing use cases and value.
+  5. The exact formula, with math rendered as inline HTML or MathML where appropriate.
+  6. A *manual example* showing how to compute the sample numbers step-by-step.
+  7. Minimum 5-7 FAQ entries for each calculator (authoritatively written).
+  8. Include JSON-LD FAQ schema and If applicable, HowTo schema with step items.
+  9. “Related Calculators” box (4 items) linking to other slugs.
+ 10. Add internal links strategically to related pages to build topical authority.
+- Provide `lastUpdated` metadata and display it near the top.
+- Generate `robots.txt` that allows indexing and points to sitemap.
+- Ensure semantic markup (article, header, main, nav, footer, section, aside).
+
+AUTOMATION: GENERATOR / DATA-DRIVEN PAGES
+- Create `calculators.json` array. Each entry should include:
+  - `name`, `slug`, `category`, `short_description`, `long_description`, `inputs` (array: {name, id, type, placeholder, unit, default}), `outputs` (array), `formula_html`, `calculation_js` (string: function body), `examples` (array of {inputs, explanation}), `faqs` (array of {q, a}), `related` (array of slugs)
+- The build script should:
+  - Read the JSON.
+  - For each item, generate an HTML page `calculators/<slug>.html` using a template partial that inserts SEO content and wires up calculator JS.
+  - Add the page link to sitemap.xml and sitemap.html.
+  - Validate output (no missing fields).
+- Provide a seed `calculators.json` that includes every calculator from the full list provided (see list below). For each calculator seed entry include minimal fields (short_description, example, 5 FAQs) — the generator should produce full pages; filler text may be used but flagged as TODO for human review.
+
+CALCULATORS (INCLUDE ALL BELOW — each as its own page and included in calculators.json)
+- Financial Calculators:
+  Mortgage Calculator, Loan Calculator, Auto Loan Calculator, Interest Calculator, Payment Calculator, Retirement Calculator, Amortization Calculator, Investment Calculator, Currency Calculator, Inflation Calculator, Finance Calculator, Mortgage Payoff Calculator, Income Tax Calculator, Compound Interest Calculator, Salary Calculator, 401K Calculator, Interest Rate Calculator, Sales Tax Calculator, House Affordability Calculator, Savings Calculator, Rent Calculator, Marriage Tax Calculator, Estate Tax Calculator, Pension Calculator, Social Security Calculator, Annuity Calculator, Annuity Payout Calculator, Credit Card Calculator, Credit Cards Payoff Calculator, Debt Payoff Calculator, Debt Consolidation Calculator, Repayment Calculator, Student Loan Calculator, College Cost Calculator, Simple Interest Calculator, CD Calculator, Bond Calculator, Roth IRA Calculator, IRA Calculator, RMD Calculator, VAT Calculator, Cash Back or Low Interest Calculator, Auto Lease Calculator, Depreciation Calculator, Average Return Calculator, Margin Calculator, Discount Calculator, Business Loan Calculator, Debt-to-Income Ratio Calculator, Real Estate Calculator, Take-Home-Paycheck Calculator, Personal Loan Calculator, Boat Loan Calculator, Lease Calculator, Refinance Calculator, Budget Calculator, Rental Property Calculator, IRR Calculator, ROI Calculator, APR Calculator, FHA Loan Calculator, VA Mortgage Calculator, Down Payment Calculator, Rent vs. Buy Calculator, Payback Period Calculator, Present Value Calculator, Future Value Calculator, Commission Calculator, Mortgage Calculator UK, Canadian Mortgage Calculator, Mortgage Amortization Calculator, Percent Off Calculator.
+
+- Fitness & Health Calculators:
+  BMI Calculator, Calorie Calculator, Body Fat Calculator, BMR Calculator, Macro Calculator, Ideal Weight Calculator, Pregnancy Calculator, Pregnancy Weight Gain Calculator, Pregnancy Conception Calculator, Due Date Calculator, Pace Calculator, Army Body Fat Calculator, Carbohydrate Calculator, Lean Body Mass Calculator, Healthy Weight Calculator, Calories Burned Calculator, One Rep Max Calculator, Target Heart Rate Calculator, Protein Calculator, Fat Intake Calculator, TDEE Calculator, Ovulation Calculator, Conception Calculator, Period Calculator, GFR Calculator, Body Type Calculator, Body Surface Area Calculator, BAC Calculator, Anorexic BMI Calculator, Weight Watcher Points Calculator, Overweight Calculator.
+
+- Math Calculators:
+  Scientific Calculator, Fraction Calculator, Percentage Calculator, Triangle Calculator, Volume Calculator, Standard Deviation Calculator, Random Number Generator, Number Sequence Calculator, Percent Error Calculator, Exponent Calculator, Binary Calculator, Hex Calculator, Half-Life Calculator, Quadratic Formula Calculator, Slope Calculator, Log Calculator, Area Calculator, Sample Size Calculator, Probability Calculator, Statistics Calculator, Mean/Median/Mode/Range Calculator, Permutation and Combination Calculator, Z-score Calculator, Confidence Interval Calculator, Ratio Calculator, Distance Calculator, Circle Calculator, Surface Area Calculator, Pythagorean Theorem Calculator, Right Triangle Calculator, Root Calculator, Least Common Multiple Calculator, Greatest Common Factor Calculator, Factor Calculator, Rounding Calculator, Matrix Calculator, Scientific Notation Calculator, Big Number Calculator, Prime Factorization Calculator, Common Factor Calculator, Basic Calculator, Long Division Calculator, Average Calculator, P-value Calculator.
+
+- Other Calculators:
+  Age Calculator, Date Calculator, Time Calculator, Hours Calculator, GPA Calculator, Grade Calculator, Height Calculator, Concrete Calculator, IP Subnet Calculator, Bra Size Calculator, Password Generator, Dice Roller, Conversion Calculator, Fuel Cost Calculator, Voltage Drop Calculator, BTU Calculator, Square Footage Calculator, Time Card Calculator, Time Zone Calculator, Love Calculator, GDP Calculator, Gas Mileage Calculator, Horsepower Calculator, Engine Horsepower Calculator, Stair Calculator, Resistor Calculator, Ohm's Law Calculator, Electricity Calculator, Shoe Size Conversion, Tip Calculator, Mileage Calculator, Density Calculator, Mass Calculator, Weight Calculator, Speed Calculator, Molarity Calculator, Molecular Weight Calculator, Roman Numeral Converter, Golf Handicap Calculator, Sleep Calculator, Tire Size Calculator, Roofing Calculator, Tile Calculator, Mulch Calculator, Gravel Calculator, Wind Chill Calculator, Heat Index Calculator, Dew Point Calculator, Bandwidth Calculator, Time Duration Calculator, Day Counter, Day of the Week Calculator.
+
+- Calculators for Your Site (widgets/embeds):
+  Mortgage Calculator for Your Site, Math Calculator for Your Site, Scientific Calculator for Your Site, Love Calculator for Your Site, Concrete Calculator for Your Site.
+
+PER-CALCULATOR UI SPEC:
+- Left column: Inputs (labels, placeholders, unit suffixes), Reset and Calculate buttons, Save/Share link (copy URL with parameters).
+- Right column: Results card with summary, explanation of results, CTA to related calculators.
+- Under both columns: SEO content block containing long_description, formula, example calculation, and FAQ accordion.
+- Provide a compact “print” view optimized for embedding.
+- Provide an “Embed this calculator” button which opens a modal with a snippet:
+  `<iframe src="https://yoursite.com/calculators/<slug>.html?embed=true" width="100%" height="500" frameborder="0"></iframe>`
+- Make inputs URL-serializable so example links can be shared and prefill inputs from query params.
+
+INTERACTIVITY & FEATURES:
+- Search that filters calculators by name & category (client-side).
+- Lightweight router (optional) to allow deep linking without full page reloads.
+- Copy-to-clipboard for results & embed code.
+- Dark mode toggle (optional) using CSS variables.
+- Accessibility: keyboard navigation, aria-* attributes for form controls and accordion.
+
+PERFORMANCE:
+- Lazy load any 3rd-party scripts.
+- Inline critical CSS for above-the-fold.
+- Minify assets and provide a build command (`npm run build`) that produces `/dist`.
+
+DOCUMENTATION & OUTPUT:
+- README.md that explains how to run dev server, build, add new calculators via `calculators.json`, and how to update content.
+- Provide a `content-review.md` file listing which calculators still have placeholder content and need expert review (e.g., tax laws, medical disclaimers).
+- Output: full site files in `/dist` and `calculators.json` seeded with all calculators above (basic content created automatically).
+
+DELIVERABLES:
+1. Fully generated static site in `/dist` with one working example per category (but generator must scaffold every calculator page).
+2. Full `calculators.json` with every calculator slug present (content may be partially auto-generated — flag pages requiring expert review).
+3. Build script `generators/build.js` that creates HTML pages, sitemap.xml, and updates sitemap.html.
+4. styles.css with theme variables and component styles.
+5. script.js handling calculator logic wiring, search, and embed features.
+6. README with instructions and expansion guidelines.
+
+PRIORITY SEQUENCING (how to output on first run):
+- Phase 1 (deliver immediately): Homepage, sitemap, categories, build script, styles, script, calculators.json (with entries for ALL calculators), and fully-built pages for these 4 starter calculators: BMI Calculator, Mortgage Calculator, Percentage Calculator, Scientific Calculator (as canonical examples).
+- Phase 2 (on same run): Use build script to generate placeholder pages for the remaining calculators with autogenerated SEO blocks and FAQs (mark those items in `content-review.md`).
+- All pages must be linkable and included in sitemap.xml.
+
+EXTRA NOTES FOR THE DEVELOPER BOT:
+- Use the color scheme exactly as above.
+- For tax or health calculators, include a small disclaimer and encourage users to consult professionals — and flag those pages in the `content-review.md`.
+- Keep the UI modern: use large, readable inputs, clear CTAs, whitespace, and microinteractions.
+- Provide sample unit tests / sanity checks in the generator for 10 random calculators to confirm outputs match expected examples (optional but preferred).
+
+END RESULT:
+A modular, SEO-first, production-ready site scaffold that contains entries/pages for every calculator in the provided list, uses Trust & Clarity color tokens, includes embed widgets, sitemap.xml, JSON-LD schemas, and a build script so I can iterate fast.
+
+
